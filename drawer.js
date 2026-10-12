@@ -51,7 +51,7 @@ function renderDrawer(){
  const other=row.groups.filter(g=>!owned.includes(g));
  drawerLayer.innerHTML=`<div class="drawer-backdrop"></div><section class="enrollment-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" tabindex="-1">
  <div class="drawer-header"><button class="drawer-close" aria-label="Закрыть"><svg class="desktop-close" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg><span class="mobile-back">←</span></button>
- <h2 id="drawer-title">${row.currentGroup||row.waitingGroup?'Изменить время':'Выбрать время'}</h2><p>${row.type} «${course.name}»</p><img class="drawer-clock" src="assets/drawer-clock.svg" alt=""></div>
+ <h2 id="drawer-title">${row.currentGroup||row.waitingGroup?'Изменить время':'Выбрать время'}</h2><p>${row.type} «${course.name}»</p><img class="drawer-clock" src="assets/drawer-clock.png" alt=""></div>
  <div class="drawer-panel"><div class="drawer-scroll">
  ${owned.length?`<div class="group-list">${list(owned)}</div><h3>Другие варианты для записи</h3>`:''}
  <div class="group-list">${list(other)}</div></div>

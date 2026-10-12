@@ -27,3 +27,16 @@
 @media(hover:none){.drawer-submit-wrap:focus-within .drawer-enrollment-tip{visibility:visible;opacity:1}}
 .drawer-confirm{grid-template-columns:minmax(0,1fr)}
 .drawer-confirm>div{min-width:0;justify-self:center;width:min(440px,100%)}
+/* Align mobile actions with the card edge while retaining a 44px hit area. */
+@media(max-width:767px){.row .action{justify-self:end;margin-right:-12px}}
+@media(max-width:767px){.deadline img{width:132px;right:8px;top:24px}}
+
+/* The full clock sits behind the panel instead of carrying a baked-in crop. */
+.drawer-header{overflow:visible}
+.drawer-clock{width:164px;top:10px;right:24px}
+.drawer-panel{position:relative;z-index:2}
+@media(max-width:767px){.drawer-clock{width:136px;top:30px;right:12px}}
+@media(max-width:767px){
+ .row:has([data-action="empty"]){row-gap:4px}
+ .row:has([data-action="empty"]) .status{grid-row:3;min-height:20px;margin-top:4px}
+}
