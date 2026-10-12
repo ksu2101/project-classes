@@ -57,7 +57,7 @@ function renderDrawer(){
  <div class="group-list">${list(other)}</div></div>
  <div class="drawer-footer" ${!selected?'hidden':''}>${helper?`<p class="drawer-helper">${helper}</p>`:''}<div class="drawer-actions">
  ${isCurrent||isWaiting?`<button class="drawer-primary" data-manage="${isWaiting?'leave':'cancel'}">Отменить запись</button>`:''}
- <div class="drawer-submit-wrap" ${!selected||isCurrent||isWaiting?'hidden':''}>${actionTip?`<div class="drawer-enrollment-tip ${selected?.noWaitlist?'no-places-tip':''}" id="enrollment-tip" role="tooltip">${actionTip}</div>`:''}<button class="drawer-primary ${needsEnrollment?'needs-enrollment':''}" data-submit ${selected?.noWaitlist||needsEnrollment?'disabled':''} ${actionTip?'aria-describedby="enrollment-tip"':''}>${primary}</button></div></div></div></div></section>`;
+ <div class="drawer-submit-wrap" ${actionTip?'tabindex="0" aria-describedby="enrollment-tip"':''} ${!selected||isCurrent||isWaiting?'hidden':''}>${actionTip?`<div class="drawer-enrollment-tip ${selected?.noWaitlist?'no-places-tip':''}" id="enrollment-tip" role="tooltip">${actionTip}</div>`:''}<button class="drawer-primary ${needsEnrollment?'needs-enrollment':''}" data-submit ${selected?.noWaitlist||needsEnrollment?'disabled':''} ${actionTip?'aria-describedby="enrollment-tip"':''}>${primary}</button></div></div></div></div></section>`;
  drawerLayer.querySelector('.drawer-scroll').scrollTop=previousScroll;
  drawerLayer.querySelector('.enrollment-drawer').classList.toggle('is-scrolled',previousScroll>16);
  drawerLayer.querySelector('.drawer-close').onclick=closeDrawer;
