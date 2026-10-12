@@ -44,7 +44,7 @@ function renderDrawer(){
  const needsEnrollment=!!selected?.full&&!selected.noWaitlist&&!row.currentGroup;
  let helper='';
  if(selected?.noWaitlist){primary='Записаться'}
- const actionTip=selected?.noWaitlist?'В этой группе нет свободных мест и листа ожидания':needsEnrollment?'Чтобы встать в лист ожидания, сначала запишись в группу со&nbsp;свободными местами':'';
+ const actionTip=selected?.noWaitlist?'На эту пару нет свободных мест и листа ожидания':needsEnrollment?'Чтобы встать в лист ожидания, сначала запишись на пару со&nbsp;свободными местами':'';
 
  const list=(arr)=>arr.map(g=>groupCard(g,row)).join('');
  const owned=row.groups.filter(g=>g.id===row.currentGroup?.id||g.id===row.waitingGroup?.id);
