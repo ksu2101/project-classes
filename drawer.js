@@ -26,7 +26,7 @@ function groupCard(g,row){
  const disabled=false;
  return `<label class="group-card ${activeDrawer.selected===g.id?'is-selected':''} ${disabled?'is-disabled':''}">
  <input type="radio" name="group" value="${g.id}" ${activeDrawer.selected===g.id?'checked':''} ${disabled?'disabled':''}>
- <span class="group-content"> <span class="group-badges">${current?drawerBadge('Записан','enrolled'):waiting?drawerBadge('Ты в листе ожидания','waiting')+drawerBadge('В очереди: 6','queue-badge'):g.noWaitlist?drawerBadge('Нет мест','conflict-danger'):g.full?drawerBadge('Можно записаться в лист ожидания','waiting')+drawerBadge('В очереди: 5','queue-badge'):''}
+ <span class="group-content"> <span class="group-badges">${current?drawerBadge('Записан','enrolled'):waiting?drawerBadge('Ты в листе ожидания','waiting')+drawerBadge('В очереди: 6','queue-badge'):g.noWaitlist?drawerBadge('Нет мест','conflict-danger'):g.full?drawerBadge('Есть лист ожидания','waiting')+drawerBadge('В очереди: 5','queue-badge'):''}
  ${g.conflicts?drawerBadge(g.conflicts.length>1?'Пересечение с рядом пар':'Пересечение с парой',g.conflicts.length>1?'conflict-danger':'conflict-badge'):''}</span><span class="group-top"><span class="group-time">${g.day}</span></span>
  <span class="group-period">${g.period}. Ауд.&nbsp;${g.room} · ${g.campus}</span>
  <span class="group-teachers">${[...new Set(g.teachers||[g.teacher,...(g.more===1?['Петрова Алевтина']:g.more?teacherNames:current&&row.type==='Лекция'&&g.teacher==='Пискорский Антуан'?['Кирьянова Ольга','Стельмах Иван']:[])])].map(name=>`<span class="group-person"><span class="person-icon" aria-hidden="true"><img src="assets/teacher.svg" alt=""></span><span>${name}</span></span>`).join('')}</span>
@@ -40,7 +40,7 @@ function renderDrawer(){
  const {course,row}=activeDrawer;
  const selected=row.groups.find(g=>g.id===activeDrawer.selected);
  const isCurrent=!!selected&&selected.id===row.currentGroup?.id,isWaiting=!!selected&&selected.id===row.waitingGroup?.id;
- let primary=!selected||isCurrent||isWaiting?'Сохранить':selected?.full?'Записаться в лист ожидания':'Записаться';
+ let primary=selected?.full?'Записаться в лист ожидания':'Записаться';
  const needsEnrollment=!!selected?.full&&!selected.noWaitlist&&!row.currentGroup;
  let helper='';
  if(selected?.noWaitlist){primary='Записаться'}
@@ -55,9 +55,9 @@ function renderDrawer(){
  <div class="drawer-panel"><div class="drawer-scroll">
  ${owned.length?`<div class="group-list">${list(owned)}</div><h3>Другие варианты для записи</h3>`:''}
  <div class="group-list">${list(other)}</div></div>
- <div class="drawer-footer" ${!row.currentGroup&&!row.waitingGroup&&!selected?'hidden':''}>${helper?`<p class="drawer-helper">${helper}</p>`:''}<div class="drawer-actions">
- ${isCurrent?'<button class="drawer-danger" data-manage="cancel"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m5 5 14 14"/></svg>Отменить запись</button>':isWaiting?'<button class="drawer-danger" data-manage="leave"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m5 5 14 14"/></svg>Отменить запись</button>':''}
- <div class="drawer-submit-wrap">${actionTip?`<div class="drawer-enrollment-tip ${selected?.noWaitlist?'no-places-tip':''}" id="enrollment-tip" role="tooltip">${actionTip}</div>`:''}<button class="drawer-primary ${needsEnrollment?'needs-enrollment':''}" data-submit ${selected?.noWaitlist||needsEnrollment?'disabled':''} ${actionTip?'aria-describedby="enrollment-tip"':''}>${primary}</button></div></div></div></div></section>`;
+ <div class="drawer-footer" ${!selected?'hidden':''}>${helper?`<p class="drawer-helper">${helper}</p>`:''}<div class="drawer-actions">
+ ${isCurrent||isWaiting?`<button class="drawer-primary" data-manage="${isWaiting?'leave':'cancel'}">Отменить запись</button>`:''}
+ <div class="drawer-submit-wrap" ${!selected||isCurrent||isWaiting?'hidden':''}>${actionTip?`<div class="drawer-enrollment-tip ${selected?.noWaitlist?'no-places-tip':''}" id="enrollment-tip" role="tooltip">${actionTip}</div>`:''}<button class="drawer-primary ${needsEnrollment?'needs-enrollment':''}" data-submit ${selected?.noWaitlist||needsEnrollment?'disabled':''} ${actionTip?'aria-describedby="enrollment-tip"':''}>${primary}</button></div></div></div></div></section>`;
  drawerLayer.querySelector('.drawer-scroll').scrollTop=previousScroll;
  drawerLayer.querySelector('.enrollment-drawer').classList.toggle('is-scrolled',previousScroll>16);
  drawerLayer.querySelector('.drawer-close').onclick=closeDrawer;

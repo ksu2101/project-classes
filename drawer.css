@@ -167,3 +167,6 @@ html.drawer-open{overflow:hidden;overscroll-behavior:none}
 .is-scrolled .drawer-clock{transform:translateY(-8px)}
 .is-scrolled .drawer-header p{transform:translateY(-4px)}
 @media(prefers-reduced-motion:reduce){.drawer-header,.drawer-header p,.drawer-clock,.is-scrolled .drawer-header p,.is-scrolled .drawer-clock{transition:none}}
+
+.drawer-submit-wrap[hidden]{display:none}
+.drawer-actions>[data-manage]{margin-left:auto;width:auto}
