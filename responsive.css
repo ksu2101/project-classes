@@ -40,3 +40,5 @@
  .row:has([data-action="empty"]){row-gap:4px}
  .row:has([data-action="empty"]) .status{grid-row:3;min-height:20px;margin-top:4px}
 }
+/* Bring desktop enrollment statuses closer to the lesson details. */
+@media(min-width:1200px){.row .status{position:relative;left:-16px}}
