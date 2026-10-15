@@ -19,7 +19,7 @@ function prepareGroups(row){
   group('free-2','Среда, 15:00–16:40','Ким Анатолий','B304','Дукат'),
   ...(otherSlot?[group('other-wait-conflict',otherSlot.day,'Стельмах Иван','B208','Телеграф',{full:true,period:otherSlot.period,teachers:['Стельмах Иван','Кирьянова Ольга']})]:[]),
   group('full','Пятница, 12:00–13:40','Гаспарян Артем','B206','Телеграф',{full:true}),
-  group('closed','Четверг, 18:00–19:20','Пискорский Антуан','B208','Дукат',{full:true,noWaitlist:true,teachers:['Пискорский Антуан','Кирьянова Ольга','Стельмах Иван']}),
+  group('closed','Четверг, 18:00–19:20','Пискорский Антуан','B208','Дукат',{full:true,queueSize:0,teachers:['Пискорский Антуан','Кирьянова Ольга','Стельмах Иван']}),
   group('conflict','Четверг, 18:00–19:20','Селищева Елена','B208','Дукат',{conflicts:['Дифференциальные уравнения, лекция']}),
   group('full-conflict','Понедельник, 12:00–13:40','Пискорский Антуан','B202','Телеграф',{full:true,conflicts:['Дифференциальные уравнения, семинар','Математический анализ, семинар']})];
 }
@@ -30,7 +30,7 @@ function groupCard(g,row){
  const disabled=false;
  return `<label class="group-card ${activeDrawer.selected===g.id?'is-selected':''} ${disabled?'is-disabled':''}">
  <input type="radio" name="group" value="${g.id}" ${activeDrawer.selected===g.id?'checked':''} ${disabled?'disabled':''}>
- <span class="group-content"> <span class="group-badges">${current?drawerBadge('Записан','enrolled'):waiting?drawerBadge(`В листе ожидания: ${waitlistPosition(row)}`,'waiting'):g.noWaitlist?drawerBadge('Нет мест','conflict-danger'):g.full?drawerBadge(`Есть лист ожидания: ${g.queueSize??5}`,'waiting'):''}
+ <span class="group-content"> <span class="group-badges">${current?drawerBadge('Записан','enrolled'):waiting?drawerBadge(`В листе ожидания: ${waitlistPosition(row)}`,'waiting'):g.full?drawerBadge(`Есть лист ожидания: ${g.queueSize??5}`,'waiting'):''}
  ${g.conflicts?drawerBadge(g.conflicts.length>1?'Пересечение с рядом пар':'Пересечение с парой',g.conflicts.length>1?'conflict-danger':'conflict-badge'):''}</span><span class="group-top"><span class="group-time">${g.day}</span></span>
  <span class="group-period">${g.period}, ${g.room} · ${g.campus}</span>
  <span class="group-teachers">${[...new Set(g.teachers||[g.teacher,...(g.more===1?['Петрова Алевтина']:g.more?teacherNames:current&&row.type==='Лекция'&&g.teacher==='Пискорский Антуан'?['Кирьянова Ольга','Стельмах Иван']:[])])].map(name=>`<span class="group-person"><span class="person-icon" aria-hidden="true"><img src="assets/teacher.svg" alt=""></span><span>${name}</span></span>`).join('')}</span>
@@ -40,7 +40,7 @@ function groupCard(g,row){
  </label>`;
 }
 function compareGroupOptions(a,b){
- const rank=g=>g.noWaitlist?3:g.conflicts?.length?2:g.full?1:0;
+ const rank=g=>g.conflicts?.length?2:g.full?1:0;
  const time=g=>{
   const days=['понедельник','вторник','среда','четверг','пятница','суббота','воскресенье'];
   const match=g.day?.toLowerCase().match(/^([^,]+),\s*(\d{1,2}):(\d{2})/);
@@ -55,11 +55,10 @@ function renderDrawer(){
  const selected=row.groups.find(g=>g.id===activeDrawer.selected);
  const isCurrent=!!selected&&selected.id===row.currentGroup?.id,isWaiting=!!selected&&selected.id===row.waitingGroup?.id;
  let primary=selected?.full?'Записаться в лист ожидания':'Записаться';
- const hasOtherWaitlist=!!selected?.full&&!selected.noWaitlist&&!!row.waitingGroup&&!isWaiting;
- const needsEnrollment=!!selected?.full&&!selected.noWaitlist&&!row.currentGroup;
+ const hasOtherWaitlist=!!selected?.full&&!!row.waitingGroup&&!isWaiting;
+ const needsEnrollment=!!selected?.full&&!row.currentGroup;
  let helper='';
- if(selected?.noWaitlist){primary='Записаться'}
- const actionTip=selected?.noWaitlist?'На эту пару нет свободных мест и листа ожидания':hasOtherWaitlist?'Чтобы записаться в этот лист ожидания, сначала выйди из текущего':needsEnrollment?'Чтобы встать в лист ожидания, сначала запишись на пару со&nbsp;свободными местами':'';
+ const actionTip=hasOtherWaitlist?'Чтобы записаться в этот лист ожидания, сначала выйди из текущего':needsEnrollment?'Чтобы встать в лист ожидания, сначала запишись на пару со&nbsp;свободными местами':'';
 
  const list=(arr)=>arr.map(g=>groupCard(g,row)).join('');
  const owned=[row.currentGroup,row.waitingGroup].filter(Boolean);
@@ -73,7 +72,7 @@ function renderDrawer(){
  <div class="group-list">${list(other)}</div></div>
  <div class="drawer-footer" ${!selected?'hidden':''}>${helper?`<p class="drawer-helper">${helper}</p>`:''}<div class="drawer-actions">
  ${isCurrent||isWaiting?`<button class="drawer-primary" data-manage="${isWaiting?'leave':'cancel'}">Отменить запись</button>`:''}
- <div class="drawer-submit-wrap" ${actionTip?'tabindex="0" aria-describedby="enrollment-tip"':''} ${!selected||isCurrent||isWaiting?'hidden':''}>${actionTip?`<div class="drawer-enrollment-tip ${selected?.noWaitlist?'no-places-tip':''}" id="enrollment-tip" role="tooltip">${actionTip}</div>`:''}<button class="drawer-primary ${needsEnrollment?'needs-enrollment':''}" data-submit ${selected?.noWaitlist||needsEnrollment||hasOtherWaitlist?'disabled':''} ${actionTip?'aria-describedby="enrollment-tip"':''}>${primary}</button></div></div></div></div></section>`;
+ <div class="drawer-submit-wrap" ${actionTip?'tabindex="0" aria-describedby="enrollment-tip"':''} ${!selected||isCurrent||isWaiting?'hidden':''}>${actionTip?`<div class="drawer-enrollment-tip" id="enrollment-tip" role="tooltip">${actionTip}</div>`:''}<button class="drawer-primary ${needsEnrollment?'needs-enrollment':''}" data-submit ${needsEnrollment||hasOtherWaitlist?'disabled':''} ${actionTip?'aria-describedby="enrollment-tip"':''}>${primary}</button></div></div></div></div></section>`;
  drawerLayer.querySelector('.drawer-scroll').scrollTop=previousScroll;
  drawerLayer.querySelector('.enrollment-drawer').classList.toggle('is-scrolled',previousScroll>16);
  drawerLayer.querySelector('.drawer-close').onclick=closeDrawer;
@@ -88,7 +87,7 @@ function renderDrawer(){
  const submit=drawerLayer.querySelector('[data-submit]');
  if(submit)submit.onclick=()=>{
   if(!selected){closeDrawer();return}
-  if(selected.noWaitlist||(selected.full&&(!row.currentGroup||(row.waitingGroup&&row.waitingGroup.id!==selected.id))))return;
+  if(selected.full&&(!row.currentGroup||(row.waitingGroup&&row.waitingGroup.id!==selected.id)))return;
   if(isCurrent||isWaiting){closeDrawer();return}
   const overlaps=!selected.full?enrollmentOverlaps(selected,row):[];
   if(overlaps.length)confirmDrawer('Записаться на это время?',`Эта пара пересекается с твоими занятиями: ${overlaps.join('; ')}. Если запишешься, пары будут проходить одновременно`,()=>commitGroup(selected),'Записаться');
@@ -148,7 +147,6 @@ function processWaitlistTurn(c,r){
 }
 function commitGroup(g){
  const row=activeDrawer.row,hadRecord=!!row.currentGroup;
- if(g.noWaitlist)return;
  if(g.full&&(!row.currentGroup||(row.waitingGroup&&row.waitingGroup.id!==g.id)))return;
  const previousCurrent=row.currentGroup,previousWaiting=row.waitingGroup;
  try{
