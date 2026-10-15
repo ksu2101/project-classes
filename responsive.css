@@ -42,3 +42,6 @@
 }
 /* Bring desktop enrollment statuses closer to the lesson details. */
 @media(min-width:1200px){.row .status{position:relative;left:-16px}}
+
+.tooltip--queue{width:208px;max-width:calc(100vw - 48px);white-space:normal}
+@media(max-width:767px){.tooltip--queue{left:0;transform:none}.tooltip--queue:after{left:72px}}
