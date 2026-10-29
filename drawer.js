@@ -32,7 +32,7 @@ function groupCard(g,row){
  return `<label class="group-card ${activeDrawer.selected===g.id?'is-selected':''} ${disabled?'is-disabled':''}">
  <input type="radio" name="group" value="${g.id}" ${activeDrawer.selected===g.id?'checked':''} ${disabled?'disabled':''}>
  <span class="group-content"> <span class="group-badges">${current?drawerBadge('Записан','enrolled'):waiting?drawerBadge(`В листе ожидания: ${waitlistPosition(row)}`,'waiting'):g.full?drawerBadge(`Есть лист ожидания: ${g.queueSize??5}`,'waiting'):''}
- ${g.conflicts?drawerBadge(g.conflictType==='elective'?'Пересечение с факультативом':g.conflicts.length>1?'Пересечение с рядом пар':'Пересечение с парой',g.conflicts.length>1?'conflict-danger':'conflict-badge'):''}</span><span class="group-top"><span class="group-time">${g.day}</span></span>
+ ${g.conflicts?drawerBadge(g.conflictType==='elective'?'Пересечение (факультатив)':g.conflicts.length>1?'Пересечение с обязательным рядом пар':'Пересечение с парой',g.conflicts.length>1?'conflict-danger':'conflict-badge'):''}</span><span class="group-top"><span class="group-time">${g.day}</span></span>
  <span class="group-period">${g.period}, ${g.room} · ${g.campus}</span>
  <span class="group-teachers">${[...new Set(g.teachers||[g.teacher,...(g.more===1?['Петрова Алевтина']:g.more?teacherNames:current&&row.type==='Лекция'&&g.teacher==='Пискорский Антуан'?['Кирьянова Ольга','Стельмах Иван']:[])])].map(name=>`<span class="group-person"><span class="person-icon" aria-hidden="true"><img src="assets/teacher.svg" alt=""></span><span>${name}</span></span>`).join('')}</span>
 
