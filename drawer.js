@@ -41,7 +41,8 @@ function groupCard(g,row){
  </label>`;
 }
 function compareGroupOptions(a,b){
- const rank=g=>g.conflicts?.length?2:g.full?1:0;
+ const compact=window.matchMedia('(max-width:1199px)').matches;
+ const rank=g=>g.conflicts?.length?(compact?(g.conflicts.length>1?4:g.conflictType==='elective'?3:2):2):g.full?1:0;
  const time=g=>{
   const days=['понедельник','вторник','среда','четверг','пятница','суббота','воскресенье'];
   const match=g.day?.toLowerCase().match(/^([^,]+),\s*(\d{1,2}):(\d{2})/);
