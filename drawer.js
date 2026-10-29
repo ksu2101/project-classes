@@ -90,11 +90,9 @@ function renderDrawer(){
   if(!selected){closeDrawer();return}
   if(selected.full&&(!row.currentGroup||(row.waitingGroup&&row.waitingGroup.id!==selected.id)))return;
   if(isCurrent||isWaiting){closeDrawer();return}
-  const overlaps=!selected.full?enrollmentOverlaps(selected,row):[];
-  if(overlaps.length)confirmDrawer('Записаться на это время?',`Эта пара пересекается с твоими занятиями: ${overlaps.join('; ')}. Если запишешься, пары будут проходить одновременно`,()=>commitGroup(selected),'Записаться');
+  if(!selected.full&&selected.conflictType==='elective')confirmDrawer('Записаться на это время?','Эта пара пересекается с факультативом. Если запишешься, в расписании будет пересечение по времени',()=>commitGroup(selected),'Записаться');
   else if(selected.full&&waitlistOverlaps(selected,row,true))confirmDrawer('Записаться в лист ожидания?','Ты уже в листе ожидания другой пары на это время. Если тебя запишут на нее, запись в новый лист ожидания отменится, когда подойдет твоя очередь',()=>commitGroup(selected),'Записаться');
   else if(!selected.full&&waitlistOverlaps(selected,row))confirmDrawer('Записаться на это время?','Эта пара пересекается с парой из твоего листа ожидания. Если пересечение останется, уберем тебя из листа ожидания, когда подойдет очередь',()=>commitGroup(selected),'Записаться');
-  else if(selected.conflicts)confirmDrawer('Выбрать это время?','У выбранной группы есть пересечение с твоими занятиями. Проверь расписание перед записью.',()=>commitGroup(selected));
   else commitGroup(selected);
  };
  drawerLayer.querySelector('[data-manage]')?.addEventListener('click',e=>{
